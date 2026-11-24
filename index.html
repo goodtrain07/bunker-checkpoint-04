@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>核爆庇護所：第 04 檢查哨</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 開場簡報畫面 -->
+  <div id="start-overlay" class="overlay-screen start-backdrop">
+    <div class="briefing-card start-card">
+      <div class="cover-hero">
+        <img src="assets/cover.jpg" alt="核爆庇護所：第 04 檢查哨 封面" class="cover-img" />
+        <div class="cover-gradient">
+          <div class="badge-tag">POST-NUCLEAR BUNKER // CHECKPOINT 04</div>
+          <h1>核爆庇護所：第 04 檢查哨</h1>
+        </div>
+      </div>
+
+      <div class="start-body">
+        <p class="briefing-desc">
+          核爆之後，外面的偽人怪物會偽裝成倖存者企圖混入基地。你是今晚的守門檢驗員，必須逐一檢查每位訪客，決定放行或消滅。
+        </p>
+
+        <div class="rules-grid">
+          <div class="rule-box">
+            <strong>🔍 三大檢驗工具（各扣 1 體力）</strong>
+            體力上限 <b>10 點</b>。可用「量體溫（正常 36°C～37.5°C；異常 &lt;15°C 或 &gt;42°C）」、「拍立得拍照」或「X 光掃描」。
+          </div>
+          <div class="rule-box">
+            <strong>☕ 咖啡補給機制</strong>
+            每成功用紅色按鈕消滅 <b>3 隻偽人</b>，即可獲得 <b>1 杯咖啡</b>，喝下可恢復 <b>+2 點體力</b>。
+          </div>
+          <div class="rule-box">
+            <strong>🔴 紅色按鈕 ／ 🟢 綠色按鈕</strong>
+            確認是怪物就按 <b>紅鈕</b> 降下玻璃罩消滅；確認是正常人類就按 <b>綠鈕</b> 開門放行。
+          </div>
+          <div class="rule-box">
+            <strong>🪪 特殊人員：管理人員周軒宇</strong>
+            9 歲白衣管理人員擁有最高權限，<b>紅鈕會自動鎖定</b>，回答他的值勤詢問後直接進入基地，並補給 <b>+5 體力</b>。
+          </div>
+        </div>
+
+        <button id="btn-start" class="primary-btn">開始值勤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 檢驗手冊彈窗 -->
+  <div id="manual-overlay" class="overlay-screen hidden">
+    <div class="briefing-card">
+      <div class="badge-tag">INSPECTION MANUAL // 值勤手冊</div>
+      <h1>異常辨識指南</h1>
+      <div class="rules-grid">
+        <div class="rule-box">
+          <strong>1. 肉眼外觀觀察（留意面具綁線！）</strong>
+          不消耗體力！仔細看訪客是否長角、多眼、三隻手、三隻腳或臉頰有鰓裂；但若臉旁有<b>面具綁線</b>，代表只是戴著面具的正常人類！
+        </div>
+        <div class="rule-box">
+          <strong>2. 體溫異常（-1 體力）</strong>
+          正常人類約 36.1°C～37.3°C。若低於 <b>15°C</b> 或高於 <b>42°C</b> 即為偽裝怪物。
+        </div>
+        <div class="rule-box">
+          <strong>3. 拍照顯影異常（-1 體力）</strong>
+          部分怪物肉眼正常，但拍立得顯影後會出現<b>無臉孔、雙頭、裂口、空衣或倒頭</b>等恐怖現象。
+        </div>
+        <div class="rule-box">
+          <strong>4. X 光透視異常（-1 體力）</strong>
+          部分偽裝者外表與體溫正常，但 X 光會照出<b>體內寄生蟲、螺旋脊椎、頭骨、無骨或雙心臟</b>。
+        </div>
+      </div>
+      <button id="btn-close-manual" class="primary-btn">回到檢查台</button>
+    </div>
+  </div>
+
+  <!-- 結局畫面（全幅大圖電影級排版） -->
+  <div id="ending-overlay" class="overlay-screen hidden">
+    <div id="ending-card" class="briefing-card ending-cinema-card">
+      <img id="ending-img" src="" alt="結局主視覺" class="ending-bg-img" />
+      <div class="ending-scrim">
+        <div class="ending-top-meta">
+          <div id="ending-badge" class="badge-tag">RESULT</div>
+          <h1 id="ending-title">值勤結束</h1>
+          <p id="ending-desc" class="ending-desc-compact"></p>
+        </div>
+
+        <div class="ending-bottom-bar">
+          <div class="stats-row-compact">
+            <div class="stat-pill">
+              <span class="stat-label-sm">消滅偽人</span>
+              <span id="stat-caught" class="stat-num-sm" style="color: #34d399;">0</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-label-sm">放行人類</span>
+              <span id="stat-humans" class="stat-num-sm" style="color: #60a5fa;">0</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-label-sm">誤放偽人</span>
+              <span id="stat-breach" class="stat-num-sm" style="color: #f87171;">0</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-label-sm">誤殺人類</span>
+              <span id="stat-innocent" class="stat-num-sm" style="color: #fbbf24;">0</span>
+            </div>
+          </div>
+
+          <button id="btn-restart" class="primary-btn restart-compact-btn">重新開始值勤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主遊戲檢查台 -->
+  <main class="game-shell">
+    <!-- 頂部狀態列 -->
+    <header class="top-hud">
+      <div class="hud-group">
+        <div id="hud-night" class="night-pill">🌙 第 1 夜：前哨警戒</div>
+        <div class="hud-item">
+          <span class="hud-label">訪客進度</span>
+          <span id="hud-progress" class="hud-value">1 / 31</span>
+        </div>
+
+        <div class="hud-item stamina-wrap">
+          <span class="hud-label">
+            體力狀態 (<span id="hud-stamina-text">10 / 10</span>)
+            <span id="stamina-bonus-toast" class="stamina-bonus-toast hidden">+5 體力！</span>
+          </span>
+          <div id="hud-stamina-bar" class="stamina-bar"></div>
+        </div>
+        <div id="hud-streak" class="streak-pill" title="連續 3 次正確處置可回復 +1 體力">⚡ 專注連擊 0/3</div>
+      </div>
+
+      <div class="hud-group">
+        <div class="hud-item">
+          <span class="hud-label">咖啡獎勵</span>
+          <span id="hud-coffee-progress" class="hud-value" style="font-size: 14px; color: #fbbf24;">抓捕進度 0/3</span>
+        </div>
+        <button id="btn-coffee" class="coffee-btn" disabled>
+          ☕ 喝咖啡 (+2 體力) <span id="coffee-count">x0</span>
+        </button>
+        <button id="btn-codex" class="icon-btn">📓 圖鑑 <span id="codex-count">0/20</span></button>
+        <button id="btn-manual" class="icon-btn">📖 手冊</button>
+        <button id="btn-mute" class="icon-btn">🔊 音效開</button>
+      </div>
+    </header>
+
+    <!-- 警戒橫幅 -->
+    <div id="alert-banner" class="alert-banner hidden">
+      <span>⚠️</span>
+      <span id="alert-text"></span>
+    </div>
+
+    <!-- 中央舞台 -->
+    <section class="main-stage">
+      <!-- 左側：防爆檢查窗 -->
+      <div class="booth-window-wrap">
+        <div class="window-frame">
+          <img id="visitor-img" class="visitor-img" alt="訪客影像" />
+
+          <!-- 普通人 X 光骨架疊層 -->
+          <div id="xray-normal-skeleton" class="xray-normal-skeleton hidden">
+            <svg viewBox="0 0 200 200" width="82%" height="82%" opacity="0.82">
+              <ellipse cx="100" cy="68" rx="22" ry="26" fill="none" stroke="#67e8f9" stroke-width="3"/>
+              <circle cx="92" cy="66" r="5" fill="#04141d" stroke="#67e8f9" stroke-width="2"/>
+              <circle cx="108" cy="66" r="5" fill="#04141d" stroke="#67e8f9" stroke-width="2"/>
+              <line x1="100" y1="95" x2="100" y2="195" stroke="#67e8f9" stroke-width="5" stroke-dasharray="6 4"/>
+              <ellipse cx="100" cy="126" rx="34" ry="8" fill="none" stroke="#67e8f9" stroke-width="2.5"/>
+              <ellipse cx="100" cy="142" rx="32" ry="8" fill="none" stroke="#67e8f9" stroke-width="2.5"/>
+              <ellipse cx="100" cy="158" rx="28" ry="8" fill="none" stroke="#67e8f9" stroke-width="2.5"/>
+            </svg>
+          </div>
+
+          <div class="glass-fx"></div>
+          <div id="xray-beam" class="xray-beam"></div>
+          <div id="thermo-laser" class="thermo-laser"></div>
+          <div id="camera-flash" class="camera-flash"></div>
+
+          <!-- 紅色玻璃罩降下動畫 -->
+          <div id="containment-dome" class="containment-dome">
+            <div class="dome-stamp">GLASS DOME PURGE // 玻璃罩消滅</div>
+          </div>
+
+          <!-- 綠色開門動畫 -->
+          <div id="gate-open-fx" class="gate-open-fx">
+            <div class="blast-door-left"></div>
+            <div class="blast-door-right"></div>
+            <div class="gate-stamp">GATE OPEN // 氣閘門開啟</div>
+          </div>
+        </div>
+
+        <!-- 怪物暴走反撲倒數條 -->
+        <div id="panic-bar-wrap" class="panic-bar-wrap hidden">
+          <div class="panic-label">🚨 偽人暴走撞門中！請在倒數結束前掀蓋拍下紅色按鈕！</div>
+          <div class="panic-track">
+            <div id="panic-fill" class="panic-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右側：對話與檢驗讀數 -->
+      <div class="intel-panel">
+        <!-- 核災通行證卡片 -->
+        <div id="id-card-box" class="id-card-box">
+          <div class="id-card-info">
+            <span>🪪 編號：<b id="id-code">BNK-001</b></span>
+            <span>📍 分區：<b id="id-sector">第 02 居住區</b></span>
+            <span>☎️ 分機：<b id="id-ext">#402</b></span>
+          </div>
+          <span id="id-stamp" class="id-stamp">PASS // 待查驗</span>
+        </div>
+
+        <div class="intercom-box">
+          <div>
+            <div class="visitor-header">
+              <span id="visitor-tag" class="visitor-tag">訪客載入中...</span>
+              <span id="clearance-badge" class="clearance-badge hidden">高權限管理人員</span>
+            </div>
+            <p id="dialogue-text" class="dialogue-text"></p>
+            <div class="intercom-actions">
+              <button id="btn-interrogate" class="interrogate-btn">🎙️ 對講機盤問 [Q]（免費）</button>
+              <button id="btn-hotline" class="hotline-btn">☎️ 基地內線查證 [E]（免費）</button>
+            </div>
+          </div>
+
+          <!-- 周軒宇專屬三選一對話 -->
+          <div id="admin-choices" class="admin-choices hidden"></div>
+        </div>
+
+        <div class="results-rack">
+          <div class="readouts-list">
+            <div class="readout-row">
+              <span>🌡️ 體溫檢測</span>
+              <span id="val-thermo" class="readout-val">尚未測量</span>
+            </div>
+            <div class="readout-row">
+              <span>📷 拍立得顯影</span>
+              <span id="val-photo" class="readout-val">尚未拍攝</span>
+            </div>
+            <div class="readout-row">
+              <span>☢️ X 光透視</span>
+              <span id="val-xray" class="readout-val">尚未掃描</span>
+            </div>
+          </div>
+
+          <div id="polaroid-slot" class="polaroid-slot hidden">
+            <div class="polaroid-frame">
+              <img id="polaroid-img" class="polaroid-img" alt="拍立得照片" />
+            </div>
+            <div id="polaroid-caption" class="polaroid-caption">PHOTO LOGGED</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 底部控制台 -->
+    <footer class="control-deck">
+      <div class="tools-rack">
+        <button id="tool-thermo" class="tool-btn">
+          <span class="tool-icon">🌡️</span>
+          <span class="tool-name">量體溫 [1]</span>
+          <span class="tool-cost">-1 體力</span>
+        </button>
+        <button id="tool-photo" class="tool-btn">
+          <span class="tool-icon">📷</span>
+          <span class="tool-name">拍照顯影 [2]</span>
+          <span class="tool-cost">-1 體力</span>
+        </button>
+        <button id="tool-xray" class="tool-btn">
+          <span class="tool-icon">☢️</span>
+          <span class="tool-name">照射 X 光 [3]</span>
+          <span class="tool-cost">-1 體力</span>
+        </button>
+      </div>
+
+      <div class="decision-rack">
+        <div class="red-btn-wrap">
+          <div id="safety-cover" class="safety-cover">🔒 點此掀開安全蓋 [Space]</div>
+          <button id="btn-red" class="action-btn red-btn">
+            <span>🔴 紅色按鈕 [R]</span>
+            <span id="red-sub" class="btn-sub">玻璃罩困住消滅</span>
+          </button>
+        </div>
+        <button id="btn-green" class="action-btn green-btn">
+          <span>🟢 綠色按鈕 [G]</span>
+          <span class="btn-sub">開門放行進入</span>
+        </button>
+      </div>
+    </footer>
+  </main>
+
+  <!-- 拍立得大圖燈箱 -->
+  <div id="polaroid-modal" class="overlay-screen hidden">
+    <div class="polaroid-modal-card">
+      <img id="polaroid-modal-img" class="polaroid-modal-img" alt="拍立得放大檢視" />
+      <div id="polaroid-modal-caption" class="polaroid-modal-caption">點擊任意處關閉</div>
+    </div>
+  </div>
+
+  <!-- 午夜換班補給選擇畫面 -->
+  <div id="shift-overlay" class="overlay-screen hidden">
+    <div class="briefing-card">
+      <div id="shift-badge" class="badge-tag">SHIFT COMPLETED // 階段換班補給</div>
+      <h1 id="shift-title">第 1 夜值勤結束</h1>
+      <p id="shift-desc" class="briefing-desc"></p>
+      <div id="upgrade-grid" class="upgrade-grid"></div>
+    </div>
+  </div>
+
+  <!-- 偽人異常圖鑑彈窗 -->
+  <div id="codex-overlay" class="overlay-screen hidden">
+    <div class="briefing-card">
+      <div class="badge-tag">ANOMALY CODEX // 基地偽人檔案庫</div>
+      <h1>偽人異常圖鑑（已解鎖 <span id="codex-modal-count">0</span> / 20）</h1>
+      <p class="briefing-desc" style="margin-bottom: 8px;">
+        每當你使用紅色按鈕成功消滅一隻偽人，系統便會永久記錄其異常特徵與檔案。
+      </p>
+      <div id="codex-grid" class="codex-grid"></div>
+      <button id="btn-close-codex" class="primary-btn">關閉圖鑑</button>
+    </div>
+  </div>
+
+  <script src="audio.js"></script>
+  <script src="data.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
